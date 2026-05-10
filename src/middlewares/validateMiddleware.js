@@ -16,7 +16,7 @@ const validate = (schema, source = "body") => {
       return next(new AppError(validationMessage, 400));
     }
 
-    req[source] = value;
+    Object.assign(req[source], value);
 
     next();
   };
