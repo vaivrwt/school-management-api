@@ -33,6 +33,7 @@ If your `.env` sets a custom `PORT`, use that port instead of `5000`.
   - `longitude` (number)
 - `List Nearby Schools` form sends `GET /listSchools?latitude=...&longitude=...`
 - API response JSON is shown directly in the UI for quick testing.
+- Visiting other GET endpoints in a browser (for example `/health`, `/listSchools?...`, invalid routes) now opens the same frontend and renders that endpoint's JSON in the built-in response viewer.
 
 ## Notes
 

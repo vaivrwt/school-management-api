@@ -14,6 +14,7 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const frontendDirectory = path.join(__dirname, "..", "frontend");
+const frontendIndexFile = path.join(frontendDirectory, "index.html");
 
 app.use(helmet()); // for security http headers
 app.use(cors()); // for cross origin requests
@@ -26,6 +27,17 @@ app.use(
   }),
 ); // for parsing json
 app.use(express.static(frontendDirectory));
+app.use((req, res, next) => {
+  const acceptHeader = req.headers.accept || "";
+  const isBrowserPageRequest =
+    req.method === "GET" && acceptHeader.includes("text/html");
+
+  if (isBrowserPageRequest) {
+    return res.sendFile(frontendIndexFile);
+  }
+
+  next();
+});
 
 app.use(apiLimiter);
 
@@ -37,7 +49,17 @@ app.get("/health", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(frontendDirectory, "index.html"));
+  const acceptHeader = req.headers.accept || "";
+  const wantsHtml = acceptHeader.includes("text/html");
+
+  if (wantsHtml) {
+    return res.sendFile(frontendIndexFile);
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Welcome to school management api",
+  });
 });
 
 app.use("/", schoolRoutes);

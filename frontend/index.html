@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SchoolOS</title>
+    <title>ESM</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -226,6 +226,51 @@
         font-size: 34px;
       }
 
+      .endpoint-card {
+        border-top: 4px solid #000;
+        border-bottom: 4px solid #000;
+        background: #000;
+        color: #fff;
+        padding: 30px 0 36px;
+      }
+
+      .endpoint-kicker {
+        margin: 0 0 8px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .endpoint-path {
+        margin: 0 0 14px;
+        font-family: "Playfair Display", Georgia, serif;
+        font-size: clamp(1.8rem, 5vw, 3.8rem);
+        line-height: 1;
+        letter-spacing: -0.03em;
+        word-break: break-word;
+      }
+
+      .endpoint-status {
+        margin: 0;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        color: #d4d4d4;
+      }
+
+      .endpoint-result {
+        margin-top: 18px;
+        border: 1px solid #fff;
+        background: transparent;
+        color: #fff;
+        padding: 12px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        min-height: 86px;
+      }
+
       .docs code {
         display: block;
         border: 1px solid #000;
@@ -252,11 +297,12 @@
     <header class="hero">
       <div class="container">
         <p class="kicker">School Management API</p>
-        <h1>SchoolOS</h1>
+        <h1>Educase School Management</h1>
         <p class="lead">
           One interface to create school records and fetch schools sorted by
-          nearest distance. Use the forms below to call <strong>/addSchool</strong>
-          and <strong>/listSchools</strong> instantly.
+          nearest distance. Use the forms below to call
+          <strong>/addSchool</strong> and
+          <strong>/listSchools</strong> instantly.
         </p>
         <div class="rules" aria-hidden="true">
           <span class="square"></span>
@@ -264,6 +310,15 @@
         </div>
       </div>
     </header>
+
+    <section id="endpoint-viewer" class="endpoint-card" hidden>
+      <div class="container">
+        <p class="endpoint-kicker">Endpoint Response Viewer</p>
+        <h2 id="endpoint-path" class="endpoint-path"></h2>
+        <p id="endpoint-status" class="endpoint-status"></p>
+        <pre id="endpoint-result" class="endpoint-result">Loading...</pre>
+      </div>
+    </section>
 
     <main class="container sections">
       <section class="card" aria-labelledby="add-title">
@@ -302,9 +357,7 @@
           </label>
           <button type="submit">POST /addSchool</button>
         </form>
-        <div id="add-result" class="result" aria-live="polite">
-Ready.
-        </div>
+        <div id="add-result" class="result" aria-live="polite">Ready.</div>
       </section>
 
       <section class="card" aria-labelledby="list-title">
@@ -338,9 +391,7 @@ Ready.
           </label>
           <button type="submit">GET /listSchools</button>
         </form>
-        <div id="list-result" class="result" aria-live="polite">
-Ready.
-        </div>
+        <div id="list-result" class="result" aria-live="polite">Ready.</div>
         <div id="school-list" class="list"></div>
       </section>
     </main>
@@ -348,7 +399,9 @@ Ready.
     <section class="docs">
       <div class="container">
         <h3>Direct API Usage</h3>
-        <code>POST /addSchool { "name", "address", "latitude", "longitude" }</code>
+        <code
+          >POST /addSchool { "name", "address", "latitude", "longitude" }</code
+        >
         <code>GET /listSchools?latitude=12.34&longitude=56.78</code>
       </div>
     </section>
@@ -359,8 +412,22 @@ Ready.
       const addResult = document.getElementById("add-result");
       const listResult = document.getElementById("list-result");
       const schoolList = document.getElementById("school-list");
+      const endpointViewer = document.getElementById("endpoint-viewer");
+      const endpointPathLabel = document.getElementById("endpoint-path");
+      const endpointStatus = document.getElementById("endpoint-status");
+      const endpointResult = document.getElementById("endpoint-result");
 
       const stringifyResponse = (data) => JSON.stringify(data, null, 2);
+      const shouldRenderEndpointViewer = () => {
+        const path = window.location.pathname.toLowerCase();
+        if (path === "/" || path === "/index.html") {
+          return false;
+        }
+        if (path.endsWith(".html")) {
+          return false;
+        }
+        return true;
+      };
       const renderSchools = (schools) => {
         schoolList.innerHTML = "";
 
@@ -386,6 +453,42 @@ Ready.
           schoolList.appendChild(item);
         });
       };
+      const renderEndpointResponse = async () => {
+        const endpointPath = `${window.location.pathname}${window.location.search}`;
+        endpointViewer.hidden = false;
+        endpointPathLabel.textContent = `GET ${endpointPath}`;
+        endpointStatus.textContent = "Fetching JSON response...";
+
+        try {
+          const response = await fetch(endpointPath, {
+            headers: {
+              Accept: "application/json",
+            },
+          });
+
+          const contentType = response.headers.get("content-type") || "";
+          let payload;
+
+          if (contentType.includes("application/json")) {
+            payload = await response.json();
+          } else {
+            payload = { message: await response.text() };
+          }
+
+          endpointStatus.textContent = `Status ${response.status} ${response.statusText}`;
+          endpointResult.textContent = stringifyResponse(payload);
+        } catch (error) {
+          endpointStatus.textContent = "Request failed";
+          endpointResult.textContent = stringifyResponse({
+            success: false,
+            message: error.message,
+          });
+        }
+      };
+
+      if (shouldRenderEndpointViewer()) {
+        renderEndpointResponse();
+      }
 
       addForm.addEventListener("submit", async (event) => {
         event.preventDefault();
