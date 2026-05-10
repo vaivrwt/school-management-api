@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SchoolOS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@500;700&family=Source+Serif+4:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --background: #ffffff;
+        --foreground: #000000;
+        --muted: #f5f5f5;
+        --muted-foreground: #525252;
+        --border-light: #e5e5e5;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--background);
+        color: var(--foreground);
+        font-family: "Source Serif 4", Georgia, serif;
+        background-image:
+          repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 0, 0, 0.02) 2px,
+            rgba(0, 0, 0, 0.02) 3px
+          ),
+          radial-gradient(rgba(0, 0, 0, 0.03), transparent 70%);
+      }
+
+      .container {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      .hero {
+        border-bottom: 4px solid #000;
+        padding: 72px 0 56px;
+      }
+
+      .kicker {
+        margin: 0 0 20px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-family: "Playfair Display", Georgia, serif;
+        font-size: clamp(3rem, 11vw, 8rem);
+        line-height: 0.95;
+        letter-spacing: -0.04em;
+      }
+
+      .lead {
+        max-width: 700px;
+        margin-top: 24px;
+        font-size: 20px;
+        line-height: 1.55;
+      }
+
+      .rules {
+        margin-top: 26px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .square {
+        width: 16px;
+        height: 16px;
+        border: 2px solid #000;
+      }
+
+      .line {
+        flex: 1;
+        border-top: 4px solid #000;
+      }
+
+      .sections {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 24px;
+        padding: 56px 0 84px;
+      }
+
+      .card {
+        grid-column: span 6;
+        border: 2px solid #000;
+        padding: 24px;
+        background: #fff;
+      }
+
+      .card h2 {
+        margin: 0 0 10px;
+        font-family: "Playfair Display", Georgia, serif;
+        font-size: clamp(1.7rem, 3.6vw, 2.7rem);
+        line-height: 1.1;
+      }
+
+      .card p {
+        margin: 0 0 20px;
+        color: var(--muted-foreground);
+        font-size: 16px;
+      }
+
+      .field-group {
+        display: grid;
+        gap: 14px;
+      }
+
+      label {
+        display: grid;
+        gap: 8px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        border: 0;
+        border-bottom: 2px solid #000;
+        padding: 10px 0;
+        background: transparent;
+        color: #000;
+        font-family: "Source Serif 4", Georgia, serif;
+        font-size: 18px;
+        border-radius: 0;
+      }
+
+      textarea {
+        min-height: 80px;
+        resize: vertical;
+      }
+
+      input:focus,
+      textarea:focus {
+        outline: none;
+        border-bottom-width: 4px;
+      }
+
+      button {
+        margin-top: 4px;
+        border: 2px solid #000;
+        background: #000;
+        color: #fff;
+        padding: 13px 16px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: none;
+        min-height: 44px;
+      }
+
+      button:hover {
+        background: #fff;
+        color: #000;
+      }
+
+      button:focus-visible {
+        outline: 3px solid #000;
+        outline-offset: 3px;
+      }
+
+      .result {
+        margin-top: 18px;
+        border: 1px solid #000;
+        background: var(--muted);
+        padding: 12px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        min-height: 82px;
+      }
+
+      .list {
+        margin-top: 18px;
+        border-top: 2px solid #000;
+      }
+
+      .school {
+        padding: 14px 0;
+        border-bottom: 1px solid var(--border-light);
+      }
+
+      .school-name {
+        margin: 0 0 2px;
+        font-weight: 600;
+        font-size: 20px;
+      }
+
+      .school-meta {
+        margin: 0;
+        color: var(--muted-foreground);
+        font-size: 14px;
+      }
+
+      .docs {
+        border-top: 4px solid #000;
+        padding: 36px 0 72px;
+      }
+
+      .docs h3 {
+        margin: 0 0 12px;
+        font-family: "Playfair Display", Georgia, serif;
+        font-size: 34px;
+      }
+
+      .docs code {
+        display: block;
+        border: 1px solid #000;
+        padding: 10px 12px;
+        margin-bottom: 8px;
+        background: #fff;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        overflow-x: auto;
+      }
+
+      @media (max-width: 900px) {
+        .card {
+          grid-column: span 12;
+        }
+
+        .hero {
+          padding-top: 56px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="container">
+        <p class="kicker">School Management API</p>
+        <h1>SchoolOS</h1>
+        <p class="lead">
+          One interface to create school records and fetch schools sorted by
+          nearest distance. Use the forms below to call <strong>/addSchool</strong>
+          and <strong>/listSchools</strong> instantly.
+        </p>
+        <div class="rules" aria-hidden="true">
+          <span class="square"></span>
+          <span class="line"></span>
+        </div>
+      </div>
+    </header>
+
+    <main class="container sections">
+      <section class="card" aria-labelledby="add-title">
+        <h2 id="add-title">Add School</h2>
+        <p>Create a new school by posting to <code>/addSchool</code>.</p>
+        <form id="add-school-form" class="field-group">
+          <label>
+            Name
+            <input name="name" type="text" required minlength="3" />
+          </label>
+          <label>
+            Address
+            <textarea name="address" required minlength="5"></textarea>
+          </label>
+          <label>
+            Latitude
+            <input
+              name="latitude"
+              type="number"
+              step="any"
+              min="-90"
+              max="90"
+              required
+            />
+          </label>
+          <label>
+            Longitude
+            <input
+              name="longitude"
+              type="number"
+              step="any"
+              min="-180"
+              max="180"
+              required
+            />
+          </label>
+          <button type="submit">POST /addSchool</button>
+        </form>
+        <div id="add-result" class="result" aria-live="polite">
+Ready.
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="list-title">
+        <h2 id="list-title">List Nearby Schools</h2>
+        <p>
+          Fetch schools sorted by distance from coordinates using
+          <code>/listSchools</code>.
+        </p>
+        <form id="list-school-form" class="field-group">
+          <label>
+            Your Latitude
+            <input
+              name="latitude"
+              type="number"
+              step="any"
+              min="-90"
+              max="90"
+              required
+            />
+          </label>
+          <label>
+            Your Longitude
+            <input
+              name="longitude"
+              type="number"
+              step="any"
+              min="-180"
+              max="180"
+              required
+            />
+          </label>
+          <button type="submit">GET /listSchools</button>
+        </form>
+        <div id="list-result" class="result" aria-live="polite">
+Ready.
+        </div>
+        <div id="school-list" class="list"></div>
+      </section>
+    </main>
+
+    <section class="docs">
+      <div class="container">
+        <h3>Direct API Usage</h3>
+        <code>POST /addSchool { "name", "address", "latitude", "longitude" }</code>
+        <code>GET /listSchools?latitude=12.34&longitude=56.78</code>
+      </div>
+    </section>
+
+    <script>
+      const addForm = document.getElementById("add-school-form");
+      const listForm = document.getElementById("list-school-form");
+      const addResult = document.getElementById("add-result");
+      const listResult = document.getElementById("list-result");
+      const schoolList = document.getElementById("school-list");
+
+      const stringifyResponse = (data) => JSON.stringify(data, null, 2);
+      const renderSchools = (schools) => {
+        schoolList.innerHTML = "";
+
+        schools.forEach((school) => {
+          const item = document.createElement("article");
+          item.className = "school";
+
+          const name = document.createElement("p");
+          name.className = "school-name";
+          name.textContent = school.name;
+
+          const address = document.createElement("p");
+          address.className = "school-meta";
+          address.textContent = school.address;
+
+          const distance = document.createElement("p");
+          distance.className = "school-meta";
+          distance.textContent = `Distance: ${school.distance} km`;
+
+          item.appendChild(name);
+          item.appendChild(address);
+          item.appendChild(distance);
+          schoolList.appendChild(item);
+        });
+      };
+
+      addForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        addResult.textContent = "Posting school data...";
+
+        const formData = new FormData(addForm);
+        const payload = {
+          name: formData.get("name"),
+          address: formData.get("address"),
+          latitude: Number(formData.get("latitude")),
+          longitude: Number(formData.get("longitude")),
+        };
+
+        try {
+          const response = await fetch("/addSchool", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          });
+
+          const data = await response.json();
+          addResult.textContent = stringifyResponse(data);
+
+          if (response.ok) {
+            addForm.reset();
+          }
+        } catch (error) {
+          addResult.textContent = `Request failed: ${error.message}`;
+        }
+      });
+
+      listForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        listResult.textContent = "Fetching schools...";
+        schoolList.innerHTML = "";
+
+        const formData = new FormData(listForm);
+        const latitude = Number(formData.get("latitude"));
+        const longitude = Number(formData.get("longitude"));
+
+        try {
+          const response = await fetch(
+            `/listSchools?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}`,
+          );
+          const data = await response.json();
+          listResult.textContent = stringifyResponse(data);
+
+          if (!response.ok || !Array.isArray(data.data)) {
+            return;
+          }
+
+          renderSchools(data.data);
+        } catch (error) {
+          listResult.textContent = `Request failed: ${error.message}`;
+        }
+      });
+    </script>
+  </body>
+</html>

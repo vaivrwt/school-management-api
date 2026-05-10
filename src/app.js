@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
+import path from "path";
+import { fileURLToPath } from "url";
 
 import schoolRoutes from "./routes/schoolRoutes.js";
 import errorMiddleware from "./middlewares/errorMiddleware.js";
@@ -9,6 +11,9 @@ import apiLimiter from "./middlewares/rateLimiter.js";
 import AppError from "./utils/AppError.js";
 
 const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const frontendDirectory = path.join(__dirname, "..", "frontend");
 
 app.use(helmet()); // for security http headers
 app.use(cors()); // for cross origin requests
@@ -20,6 +25,7 @@ app.use(
     limit: "20kb",
   }),
 ); // for parsing json
+app.use(express.static(frontendDirectory));
 
 app.use(apiLimiter);
 
@@ -31,10 +37,7 @@ app.get("/health", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "Welcome to school management api",
-  });
+  res.sendFile(path.join(frontendDirectory, "index.html"));
 });
 
 app.use("/", schoolRoutes);
