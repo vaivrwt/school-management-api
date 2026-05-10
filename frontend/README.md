@@ -26,16 +26,16 @@ If your `.env` sets a custom `PORT`, use that port instead of `5000`.
 
 ## What This Page Does
 
-- `Add School` form sends `POST /addSchool` with JSON body:
-  - `name` (string)
-  - `address` (string)
-  - `latitude` (number)
-  - `longitude` (number)
-- `List Nearby Schools` form sends `GET /listSchools?latitude=...&longitude=...`
-- API response JSON is shown directly in the UI for quick testing.
-- Visiting other GET endpoints in a browser (for example `/health`, `/listSchools?...`, invalid routes) now opens the same frontend and renders that endpoint's JSON in the built-in response viewer.
+- Serves a static SaaS-style landing page at `/`.
+- Shows API overview and endpoint documentation for:
+  - `GET /health`
+  - `POST /addSchool`
+  - `GET /listSchools`
+  - versioned equivalents under `/api/v1/schools`
+- Includes example request/response payload snippets.
 
 ## Notes
 
 - No backend endpoint contract was changed.
 - Static files are served from `frontend/` via Express.
+- API endpoints continue returning JSON responses.

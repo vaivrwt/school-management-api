@@ -4,14 +4,19 @@ const validate = (schema, source = "body") => {
   return (req, res, next) => {
     const data = req[source];
 
-    const { error, value } = schema.validate(data);
+    const { error, value } = schema.validate(data, {
+      abortEarly: false,
+    });
 
     if (error) {
-      return next(new AppError(error.details[0].message, 400));
+      const validationMessage = error.details
+        .map((detail) => detail.message)
+        .join(", ");
+
+      return next(new AppError(validationMessage, 400));
     }
 
-    // safely update validated data
-    Object.assign(req[source], value);
+    req[source] = value;
 
     next();
   };

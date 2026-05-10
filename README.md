@@ -154,7 +154,8 @@ CREATE TABLE IF NOT EXISTS schools (
   name VARCHAR(255) NOT NULL,
   address VARCHAR(500) NOT NULL,
   latitude FLOAT NOT NULL,
-  longitude FLOAT NOT NULL
+  longitude FLOAT NOT NULL,
+  CONSTRAINT uk_school_identity UNIQUE (name, address, latitude, longitude)
 );
 ```
 
@@ -276,6 +277,7 @@ All errors follow a consistent shape:
 Common status codes:
 
 - `400` invalid input
+- `409` duplicate school conflict
 - `404` route not found
 - `429` too many requests
 - `500` internal server error
@@ -294,3 +296,4 @@ Requirement checklist:
 
 - Rate limit is enabled globally (`100` requests per `15` minutes per IP).
 - Distance is returned in kilometers, rounded to 2 decimals.
+- Duplicate schools (same `name + address + latitude + longitude`) are blocked.

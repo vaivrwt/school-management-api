@@ -27,17 +27,6 @@ app.use(
   }),
 ); // for parsing json
 app.use(express.static(frontendDirectory));
-app.use((req, res, next) => {
-  const acceptHeader = req.headers.accept || "";
-  const isBrowserPageRequest =
-    req.method === "GET" && acceptHeader.includes("text/html");
-
-  if (isBrowserPageRequest) {
-    return res.sendFile(frontendIndexFile);
-  }
-
-  next();
-});
 
 app.use(apiLimiter);
 
